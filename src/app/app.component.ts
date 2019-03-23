@@ -159,12 +159,11 @@ export class AppComponent implements AfterViewInit {
 	const b = tf.scalar(255);
 	image = image.div(b);
 	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
-	console.log(batch.dataSync());
-	let probs = this.model.predict(batch);
-	let x = Math.round(tf.max(probs).dataSync()[0] * 100);
-	this.probability = x;
-	console.log(probs.shape);
-	this.prediction = this.labels[0];
+	//console.log(batch.dataSync());
+	let probs = this.model.predict(batch).squeeze();
+	this.probability = Math.round(tf.max(probs).dataSync()[0] * 100);
+	console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
+	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
   }
   
   reset() {
