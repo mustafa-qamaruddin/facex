@@ -30,8 +30,8 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('canvas') public canvas: ElementRef;
 
-  @Input() public width = window.innerWidth - 30;
-  @Input() public height = window.innerWidth - 30;
+  @Input() public width = window.innerWidth - 50;
+  @Input() public height = window.innerWidth - 50;
 
   private cx: CanvasRenderingContext2D;
   
