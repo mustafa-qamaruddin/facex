@@ -4,6 +4,7 @@ import {
 import { fromEvent, merge } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
 import * as tf from '@tensorflow/tfjs';
+tf.ENV.set('WEBGL_PACK', false)
 
 @Component({
   selector: 'app-root',
@@ -157,8 +158,8 @@ export class AppComponent implements AfterViewInit {
 	image = image.toFloat();
 	const b = tf.scalar(255);
 	image = image.div(b);
-	console.log(image.dataSync());
-	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28,1]);
+	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
+	console.log(batch.dataSync());
 	this.prediction = this.model.predict(batch).dataSync();
   }
   
