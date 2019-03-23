@@ -1,7 +1,7 @@
 import {
   Component, Input, ElementRef, AfterViewInit, ViewChild
 } from '@angular/core';
-import { fromEvent } from 'rxjs';
+import { fromEvent, merge } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
 import * as tf from '@tensorflow/tfjs';
 
@@ -63,7 +63,7 @@ export class AppComponent implements AfterViewInit {
   
   private captureEvents(canvasEl: HTMLCanvasElement) {
     // this will capture all mousedown events from the canvas element
-    fromEvent(canvasEl, 'mousedown')
+    let a = fromEvent(canvasEl, 'mousedown')
       .pipe(
         switchMap((e) => {
           // after a mouse down, we'll record all mouse moves
@@ -79,8 +79,26 @@ export class AppComponent implements AfterViewInit {
               pairwise()
             )
         })
-      )
-      .subscribe((res: [MouseEvent, MouseEvent]) => {
+      );
+	let b = fromEvent(canvasEl, 'touchstart')
+      .pipe(
+        switchMap((e) => {
+          // after a mouse down, we'll record all mouse moves
+          return fromEvent(canvasEl, 'touchmove')
+            .pipe(
+              // we'll stop (and unsubscribe) once the user releases the mouse
+              // this will trigger a 'mouseup' event    
+              takeUntil(fromEvent(canvasEl, 'touchend')),
+              // we'll also stop (and unsubscribe) once the mouse leaves the canvas (mouseleave event)
+              takeUntil(fromEvent(canvasEl, 'touchleave')),
+              // pairwise lets us get the previous value to draw a line from
+              // the previous point to the current point    
+              pairwise()
+            )
+        })
+      );
+    
+    merge(a, b).subscribe((res: [MouseEvent, MouseEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
   
         // previous and current position with the offset
@@ -112,9 +130,11 @@ export class AppComponent implements AfterViewInit {
 	
 	const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
 	this.sample = canvasEl.toDataURL();
-	let image = tf.browser.fromPixels(canvasEl);  // for example
-	//image = tf.image.cropAndResize(image, boxes, boxInd, cropSize)
-	this.prediction = this.model.predict(image);
+	let image = tf.browser.fromPixels(canvasEl);
+	image = tf.image.resizeBilinear(image, [28, 28]);
+	image = image.mean(2);
+	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28,1]);
+	// this.prediction = this.model.predict(batch);
   }
   
   reset() {
