@@ -14,7 +14,7 @@ export class AppComponent implements AfterViewInit {
   title = 'facex';
   prediction = NaN;
   probability = 0;
-  thickness = 2;
+  thickness = 5;
   labels = [
 	'T-shirt/top',
 	'Trouser',
@@ -55,7 +55,11 @@ export class AppComponent implements AfterViewInit {
 
     this.cx.lineWidth = this.thickness;
     this.cx.lineCap = 'round';
-    this.cx.strokeStyle = '#000';
+    this.cx.strokeStyle = '#fff';
+
+	this.cx.fillStyle = "#000";
+	this.cx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+	this.cx.fill();
 
     this.captureEvents(canvasEl);
 	this.sample = canvasEl.toDataURL();
@@ -147,8 +151,13 @@ export class AppComponent implements AfterViewInit {
 	const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
 	this.sample = canvasEl.toDataURL();
 	let image = tf.browser.fromPixels(canvasEl);
+	
 	image = tf.image.resizeBilinear(image, [28, 28]);
 	image = image.mean(2);
+	image = image.toFloat();
+	const b = tf.scalar(255);
+	image = image.div(b);
+	console.log(image.dataSync());
 	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28,1]);
 	// this.prediction = this.model.predict(batch);
   }
