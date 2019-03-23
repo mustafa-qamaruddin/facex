@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
+import * as tf from '@tensorflow/tfjs';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ export class AppComponent implements AfterViewInit {
 	'Ankle boot'
 	];
   sample = "";
+  model:any;
 
   @ViewChild('canvas') public canvas: ElementRef;
 
@@ -42,7 +44,9 @@ export class AppComponent implements AfterViewInit {
   }
   
   
-  public ngAfterViewInit() {
+  public async ngAfterViewInit() {
+	this.model = await tf.loadLayersModel("assets/model.json");
+
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d');
 
@@ -54,6 +58,7 @@ export class AppComponent implements AfterViewInit {
     this.cx.strokeStyle = '#000';
 
     this.captureEvents(canvasEl);
+	this.sample = canvasEl.toDataURL();
   }
   
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -107,6 +112,9 @@ export class AppComponent implements AfterViewInit {
 	
 	const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
 	this.sample = canvasEl.toDataURL();
+	let image = tf.browser.fromPixels(canvasEl);  // for example
+	//image = tf.image.cropAndResize(image, boxes, boxInd, cropSize)
+	this.prediction = this.model.predict(image);
   }
   
   reset() {

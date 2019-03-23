@@ -1,5 +1,5 @@
 <div>
-	<h1>CS623 Spring 2019</h1>
+	<h1>CS624 Spring 2019</h1>
 	<h2>TensorFlow 2.0 & Fashion MNIST</h2>
 	<p>
 		<span>Label:</span><span>{{prediction}}</span>
@@ -16,7 +16,7 @@
 		<label for="thickness">Pencil Thickness ( {{thickness }} )
 			<select (change)="changePencil($event)">
 				<option value="1">1</option>
-				<option value="2">2</option>
+				<option value="2" selected>2</option>
 				<option value="3">3</option>
 				<option value="4">4</option>
 				<option value="5">5</option>
@@ -42,6 +42,31 @@
 		<button (click)="reset()">Reset</button>
 	</p>
 	<canvas #canvas></canvas>
+	<div id="output-area"><span id="output-header"> </span><div id="output-body"><div class="stream output-id-1"><div class="output_subarea output_text"><pre>
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 26, 26, 6)         60        
+_________________________________________________________________
+average_pooling2d (AveragePo (None, 13, 13, 6)         0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 11, 11, 16)        880       
+_________________________________________________________________
+average_pooling2d_1 (Average (None, 5, 5, 16)          0         
+_________________________________________________________________
+flatten (Flatten)            (None, 400)               0         
+_________________________________________________________________
+dense (Dense)                (None, 128)               51328     
+_________________________________________________________________
+dense_1 (Dense)              (None, 84)                10836     
+_________________________________________________________________
+dense_2 (Dense)              (None, 10)                850       
+=================================================================
+Total params: 63,954
+Trainable params: 63,954
+Non-trainable params: 0
+_________________________________________________________________
+</pre></div></div></div><span id="output-footer"></span></div>
 	<p>
 		<b>Student Information:</b>
 		<br />
