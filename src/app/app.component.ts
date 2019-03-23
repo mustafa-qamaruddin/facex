@@ -13,8 +13,8 @@ tf.ENV.set('WEBGL_PACK', false)
 })
 export class AppComponent implements AfterViewInit {
   title = 'facex';
-  prediction = NaN;
-  probability = 0;
+  prediction:any = NaN;
+  probability:any = 0.0;
   thickness = 5;
   labels = [
 	'T-shirt/top',
@@ -160,7 +160,10 @@ export class AppComponent implements AfterViewInit {
 	image = image.div(b);
 	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
 	console.log(batch.dataSync());
-	this.prediction = this.model.predict(batch).dataSync();
+	let probs = this.model.predict(batch);
+	this.probability = Math.round(tf.max(probs).dataSync() * 100) / 100;
+	console.log(tf.argMax(probs).dataSync());
+	this.prediction = this.labels[0];
   }
   
   reset() {
