@@ -159,11 +159,14 @@ export class AppComponent implements AfterViewInit {
 	image = image.div(b);
 	console.log(image.dataSync());
 	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28,1]);
-	// this.prediction = this.model.predict(batch);
+	this.prediction = this.model.predict(batch);
   }
   
   reset() {
 	this.cx.clearRect(0, 0, this.width, this.height);
+	this.cx.fillStyle = "#000";
+	this.cx.fillRect(0, 0, this.width, this.height);
+	this.cx.fill();
   }
 
 }
