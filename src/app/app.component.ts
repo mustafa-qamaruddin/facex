@@ -81,24 +81,25 @@ export class AppComponent implements AfterViewInit {
         })
       );
 	let b = fromEvent(canvasEl, 'touchstart')
-      .pipe(
-        switchMap((e) => {
-          // after a mouse down, we'll record all mouse moves
-          return fromEvent(canvasEl, 'touchmove')
-            .pipe(
-              // we'll stop (and unsubscribe) once the user releases the mouse
-              // this will trigger a 'mouseup' event    
-              takeUntil(fromEvent(canvasEl, 'touchend')),
-              // we'll also stop (and unsubscribe) once the mouse leaves the canvas (mouseleave event)
-              takeUntil(fromEvent(canvasEl, 'touchleave')),
-              // pairwise lets us get the previous value to draw a line from
-              // the previous point to the current point    
-              pairwise()
-            )
-        })
-      );
+		.pipe(
+		switchMap((e) => {
+		  e.preventDefault();
+		  // after a mouse down, we'll record all mouse moves
+		  return fromEvent(canvasEl, 'touchmove')
+			.pipe(
+			  // we'll stop (and unsubscribe) once the user releases the mouse
+			  // this will trigger a 'mouseup' event    
+			  takeUntil(fromEvent(canvasEl, 'touchend')),
+			  // we'll also stop (and unsubscribe) once the mouse leaves the canvas (mouseleave event)
+			  takeUntil(fromEvent(canvasEl, 'touchleave')),
+			  // pairwise lets us get the previous value to draw a line from
+			  // the previous point to the current point    
+			  pairwise()
+			)
+		})
+		);
     
-    merge(a, b).subscribe((res: [MouseEvent, MouseEvent]) => {
+    a.subscribe((res: [MouseEvent, MouseEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
   
         // previous and current position with the offset
@@ -115,6 +116,24 @@ export class AppComponent implements AfterViewInit {
         // this method we'll implement soon to do the actual drawing
         this.drawOnCanvas(prevPos, currentPos);
       });
+	
+	b.subscribe((res: [TouchEvent, TouchEvent]) => {
+        const rect = canvasEl.getBoundingClientRect();
+  
+        // previous and current position with the offset
+        const prevPos = {
+          x: res[0].targetTouches[0].pageX - rect.left,
+          y: res[0].targetTouches[0].pageY - rect.top
+        };
+  
+        const currentPos = {
+          x: res[1].targetTouches[0].pageX - rect.left,
+          y: res[1].targetTouches[0].pageY - rect.top
+        };
+  
+        // this method we'll implement soon to do the actual drawing
+        this.drawOnCanvas(prevPos, currentPos);
+    });
   }
 
   private drawOnCanvas(prevPos: { x: number, y: number }, currentPos: { x: number, y: number }) {
