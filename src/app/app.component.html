@@ -2,11 +2,54 @@
 	<h1>CS623 Spring 2019</h1>
 	<h2>TensorFlow 2.0 & Fashion MNIST</h2>
 	<p>
-		<span>Label:</span><span>{{predicted}}</span>
+		<span>Label:</span><span>{{prediction}}</span>
 	</p>
 	<p>
-		<span>Probability:</span></span></span>
+		<span>Probability:</span><span>{{probability}}</span>
+	</p>
+	<div *ngIf="sample">
+		<p>
+			<img [src]="sample" class="sample" />
+		</p>
+	</div>
+	<p>
+		<label for="thickness">Pencil Thickness ( {{thickness }} )
+			<select (change)="changePencil($event)">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+			</select>
+		</label>
+	</p>
+	<p>
+		<button (click)="reset()">Reset</button>
 	</p>
 	<canvas #canvas></canvas>
+	<p>
+		<b>Student Information:</b>
+		<br />
+		<b>Name</b>: Mustafa Hesham Mahrous
+		<br />
+		<b>Email</b>: m.qamaruddin.89@gmail.com
+		<br />
+		<b>Mobile</b>: +2 011 2764 09 73
+	</p>
 </div>
 <router-outlet></router-outlet>
