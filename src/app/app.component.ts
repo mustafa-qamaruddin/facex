@@ -159,7 +159,7 @@ export class AppComponent implements AfterViewInit {
 	image = image.div(b);
 	console.log(image.dataSync());
 	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28,1]);
-	this.prediction = this.model.predict(batch);
+	this.prediction = this.model.predict(batch).dataSync();
   }
   
   reset() {
