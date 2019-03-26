@@ -33,8 +33,8 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('canvas') public canvas: ElementRef;
 
-  @Input() public width =  Math.ceil(window.innerWidth * 85 / 100) - 25;
-  @Input() public height = Math.ceil(window.innerWidth * 85 / 100) - 25;
+  @Input() public width =  Math.ceil(window.innerWidth * 50 / 100) - 25;
+  @Input() public height = Math.ceil(window.innerWidth * 50 / 100) - 25;
 
   private cx: CanvasRenderingContext2D;
   
