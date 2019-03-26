@@ -148,7 +148,16 @@ export class AppComponent implements AfterViewInit {
       this.cx.lineTo(currentPos.x, currentPos.y);
       this.cx.stroke();
     }
-	
+  }
+  
+  reset() {
+	this.cx.clearRect(0, 0, this.width, this.height);
+	this.cx.fillStyle = "#000";
+	this.cx.fillRect(0, 0, this.width, this.height);
+	this.cx.fill();
+  }
+
+  predict() { 
 	const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
 	this.sample = canvasEl.toDataURL();
 	let image = tf.browser.fromPixels(canvasEl);
@@ -165,12 +174,4 @@ export class AppComponent implements AfterViewInit {
 	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
   }
-  
-  reset() {
-	this.cx.clearRect(0, 0, this.width, this.height);
-	this.cx.fillStyle = "#000";
-	this.cx.fillRect(0, 0, this.width, this.height);
-	this.cx.fill();
-  }
-
 }
