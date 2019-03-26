@@ -33,8 +33,8 @@ export class AppComponent implements AfterViewInit {
 
   @ViewChild('canvas') public canvas: ElementRef;
 
-  @Input() public width =  Math.ceil(window.innerWidth * 50 / 100) - 50;
-  @Input() public height = Math.ceil(window.innerWidth * 50 / 100) - 50;
+  @Input() public width =  Math.ceil(window.innerWidth * 85 / 100) - 25;
+  @Input() public height = Math.ceil(window.innerWidth * 85 / 100) - 25;
 
   private cx: CanvasRenderingContext2D;
   
@@ -162,7 +162,7 @@ export class AppComponent implements AfterViewInit {
 	//console.log(batch.dataSync());
 	let probs = this.model.predict(batch).squeeze();
 	this.probability = Math.round(tf.max(probs).dataSync()[0] * 100);
-	console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
+	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
   }
   
