@@ -41,13 +41,7 @@ export class AppComponent implements AfterViewInit {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
     scales: { xAxes: [{
-            barThickness: 10,
-            marginTop: 30,
-            marginBottom: 10
         }], yAxes: [{
-            barThickness: 10,
-            marginTop: 30,
-            marginBottom: 10
         }] },
     plugins: {
       datalabels: {
