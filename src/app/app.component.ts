@@ -40,8 +40,14 @@ export class AppComponent implements AfterViewInit {
   public barChartOptions: ChartOptions = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
-    scales: { xAxes: [{}], yAxes: [{
+    scales: { xAxes: [{
             barThickness: 10,
+            marginTop: 30,
+            marginBottom: 10
+        }], yAxes: [{
+            barThickness: 10,
+            marginTop: 30,
+            marginBottom: 10
         }] },
     plugins: {
       datalabels: {
@@ -52,11 +58,11 @@ export class AppComponent implements AfterViewInit {
   };
   public barChartLabels: Label[] = this.labels;
   public barChartType: ChartType = 'horizontalBar';
-  public barChartLegend = true;
+  public barChartLegend = false;
   public barChartPlugins = [pluginDataLabels];
 
   public barChartData: ChartDataSets[] = [
-    { data: [0,0,0,0,0,0,0,0,0,0], label: 'Probabilities' }
+    { data: [0,0,0,0,0,0,0,0,0,0] }
   ];
 
   @ViewChild('canvas') public canvas: ElementRef;
@@ -84,9 +90,9 @@ export class AppComponent implements AfterViewInit {
 
     this.cx.lineWidth = this.thickness;
     this.cx.lineCap = 'round';
-    this.cx.strokeStyle = '#fff';
+    this.cx.strokeStyle = '#000';
 
-	this.cx.fillStyle = "#000";
+	this.cx.fillStyle = "#fff";
 	this.cx.fillRect(0, 0, canvasEl.width, canvasEl.height);
 	this.cx.fill();
 
@@ -180,7 +186,7 @@ export class AppComponent implements AfterViewInit {
   
   reset() {
 	this.cx.clearRect(0, 0, this.width, this.height);
-	this.cx.fillStyle = "#000";
+	this.cx.fillStyle = "#fff";
 	this.cx.fillRect(0, 0, this.width, this.height);
 	this.cx.fill();
   }
