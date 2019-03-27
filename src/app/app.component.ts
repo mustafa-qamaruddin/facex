@@ -4,7 +4,13 @@ import {
 import { fromEvent, merge } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
 import * as tf from '@tensorflow/tfjs';
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import { Label } from 'ng2-charts';
+
+
 tf.ENV.set('WEBGL_PACK', false)
+
 
 @Component({
   selector: 'app-root',
@@ -30,11 +36,33 @@ export class AppComponent implements AfterViewInit {
 	];
   sample = "";
   model:any;
+  
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    // We use these empty structures as placeholders for dynamic theming.
+    scales: { xAxes: [{}], yAxes: [{
+            barThickness: 10,
+        }] },
+    plugins: {
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+      }
+    }
+  };
+  public barChartLabels: Label[] = this.labels;
+  public barChartType: ChartType = 'horizontalBar';
+  public barChartLegend = true;
+  public barChartPlugins = [pluginDataLabels];
+
+  public barChartData: ChartDataSets[] = [
+    { data: [0,0,0,0,0,0,0,0,0,0], label: 'Probabilities' }
+  ];
 
   @ViewChild('canvas') public canvas: ElementRef;
 
-  @Input() public width =  Math.ceil(window.innerWidth * 50 / 100) - 25;
-  @Input() public height = Math.ceil(window.innerWidth * 50 / 100) - 25;
+  @Input() public width =  Math.ceil(window.innerWidth * 25 / 100) - 25;
+  @Input() public height = Math.ceil(window.innerWidth * 25 / 100) - 25;
 
   private cx: CanvasRenderingContext2D;
   
@@ -173,5 +201,6 @@ export class AppComponent implements AfterViewInit {
 	this.probability = Math.round(tf.max(probs).dataSync()[0] * 100);
 	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
+    this.barChartData[0].data = probs.dataSync();
   }
 }
