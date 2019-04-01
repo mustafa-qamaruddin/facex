@@ -3,6 +3,14 @@
 	<h2>TensorFlow 2.0 & Fashion MNIST</h2>
 	<div class="container-me">
 		<p>
+			<label for="thickness">Choose Model ( {{ model_name }} )
+				<select (change)="changeModel($event)">
+					<option value="0">CNN on Fashion MNIST</option>
+					<option value="1" selected>CNN on Convoluted Sketch Fashion MNIST</option>
+				</select>
+			</label>
+		</p>
+		<p>
 			<label for="thickness">Pencil Thickness ( {{thickness }} )
 				<select (change)="changePencil($event)">
 					<option value="1">1</option>
@@ -75,7 +83,26 @@
 		<br />
 		<button (click)="predict()">Predict</button>
 		<br />
-		<div>
+		<div *ngIf="display_sketch">
+			<div class="left-me">
+				<h3>Original Dataset BEFORE Convolution Filter</h3>
+				<img src="assets/sketches_before.png" />
+			</div>
+			<div class="left-me">
+				<h3>Sketch Dataset AFTER Convolution Filter</h3>
+				<img src="assets/sketches_after.png" />
+			</div>
+			<div class="left-me">
+				<img src="assets/loss-2.png" />
+			</div>
+			<div class="left-me">
+				<img src="assets/accuracy-2.png" />
+			</div>
+			<div class="left-me">
+				<img src="assets/architecture.jpg" />
+			</div>
+		</div>
+		<div *ngIf="!display_sketch">
 			<p>
 				<img src="assets/loss.png" />
 			</p>
@@ -83,7 +110,7 @@
 				<img src="assets/accuracy.png" />
 			</p>
 		</div>
-		<div id="output-area"><span id="output-header"> </span><div id="output-body"><div class="stream output-id-1"><div class="output_subarea output_text"><pre>
+		<div id="output-area" class="left-me"><span id="output-header"> </span><div id="output-body"><div class="stream output-id-1"><div class="output_subarea output_text"><pre>
 	
 	_________________________________________________________________
 	Layer (type)                 Output Shape              Param #   
@@ -134,7 +161,9 @@
 	_________________________________________________________________
 	
 	</pre></div></div></div><span id="output-footer"></span></div>
-		<p>
+	</div>
+	<div class="container-me">
+		<div class="left-me">
 			<b>Student Information:</b>
 			<br />
 			<b>Name</b>: Mustafa Hesham Mahrous
@@ -142,7 +171,7 @@
 			<b>Email</b>: m.qamaruddin.89@gmail.com
 			<br />
 			<b>Mobile</b>: +2 011 2764 09 73
-		</p>
+		</div>
 	</div>
 </div>
 <router-outlet></router-outlet>

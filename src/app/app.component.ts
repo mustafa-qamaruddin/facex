@@ -36,6 +36,8 @@ export class AppComponent implements AfterViewInit {
 	];
   sample = "";
   model:any;
+  model_name = "CNN on Convoluted Sketch Fashion MNIST";
+  display_sketch = true;
   
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -74,7 +76,7 @@ export class AppComponent implements AfterViewInit {
   
   
   public async ngAfterViewInit() {
-	this.model = await tf.loadLayersModel("assets/model.json");
+	this.model = await tf.loadLayersModel("assets/modelb/model.json");
 
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d');
@@ -202,5 +204,19 @@ export class AppComponent implements AfterViewInit {
 	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
     this.barChartData[0].data = probs.dataSync();
+  }
+    
+    
+  async changeModel(e) {
+      let index = e.target.selectedIndex;
+      if ( index == 0) {
+            this.model_name = "CNN on Fashion MNIST";
+            this.model = await tf.loadLayersModel("assets/model.json");
+            this.display_sketch = false;
+      } else {
+            this.model_name = "CNN on Convoluted Sketch Fashion MNIST";
+            this.model = await tf.loadLayersModel("assets/modelb/model.json");
+            this.display_sketch = true;
+      }
   }
 }
