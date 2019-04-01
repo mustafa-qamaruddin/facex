@@ -232,7 +232,6 @@ export class AppComponent implements AfterViewInit {
         let l = this.model.layers[i];
         let temp = l.apply(o1);
         temp = temp.mul(b);
-        console.log(temp.max().dataSync(), temp.min().dataSync());
         let shape = temp.shape;
         let buffer = temp.dataSync();
         let shape_len = shape.length;
