@@ -38,6 +38,8 @@ export class AppComponent implements AfterViewInit {
   model:any;
   model_name = "CNN on Convoluted Sketch Fashion MNIST";
   display_sketch = true;
+  pen_color = "#000"
+  bg_color = "#fff"
   
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -86,9 +88,14 @@ export class AppComponent implements AfterViewInit {
 
     this.cx.lineWidth = this.thickness;
     this.cx.lineCap = 'round';
-    this.cx.strokeStyle = '#000';
-
-	this.cx.fillStyle = "#fff";
+    
+    if ( this.display_sketch ) {
+        this.cx.strokeStyle = this.pen_color;
+        this.cx.fillStyle = this.bg_color;
+    } else {
+        this.cx.strokeStyle = this.pen_color;    
+    	this.cx.fillStyle = this.bg_color;
+    }
 	this.cx.fillRect(0, 0, canvasEl.width, canvasEl.height);
 	this.cx.fill();
 
@@ -182,7 +189,11 @@ export class AppComponent implements AfterViewInit {
   
   reset() {
 	this.cx.clearRect(0, 0, this.width, this.height);
-	this.cx.fillStyle = "#fff";
+    if ( this.display_sketch ) {
+        this.cx.fillStyle = this.bg_color;
+    } else {
+	   this.cx.fillStyle = this.bg_color;
+    }
 	this.cx.fillRect(0, 0, this.width, this.height);
 	this.cx.fill();
   }
@@ -204,6 +215,31 @@ export class AppComponent implements AfterViewInit {
 	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
     this.barChartData[0].data = probs.dataSync();
+      
+    let o1 = batch;
+    for ( let i in this.model.layers) {
+        let name = this.model.layers[i].name;
+        
+        if ( name.indexOf("flatten") !== -1 ) {
+            break;
+        }
+        
+        let l = this.model.layers[i];
+        let temp = l.apply(o1);
+        console.log(temp.shape, l.name);
+        let shape = temp.shape;
+        let buffer = temp.dataSync();
+        let shape_len = shape.length;
+        
+        let w = shape[1];
+        let h = shape[2];
+        for ( let j = 0; j < shape[shape_len-1]; j++) {
+            let start = j * (w * h);
+            let end = start + (w*h);
+            let im_data = buffer.slice(start, end + 1);
+        }
+        o1 = temp;
+    }
   }
     
     
@@ -218,5 +254,18 @@ export class AppComponent implements AfterViewInit {
             this.model = await tf.loadLayersModel("assets/modelb/model.json");
             this.display_sketch = true;
       }
+  }
+  
+  changePen(e) {
+      let index = e.target.selectedIndex;
+      this.cx.strokeStyle = e.target.options[index].value;
+      this.pen_color = e.target.options[index].value;
+  }
+    
+  changeBG(e) {
+      let index = e.target.selectedIndex;
+      this.cx.fillStyle = e.target.options[index].value;
+      this.bg_color = e.target.options[index].value;
+      this.reset();
   }
 }

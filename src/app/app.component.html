@@ -11,6 +11,28 @@
 			</label>
 		</p>
 		<p>
+			<label for="thickness">Pen Color ( {{ pen_color }} )
+				<select (change)="changePen($event)">
+					<option value="#000" selected>Black</option>
+					<option value="#fff">White</option>
+					<option value="#A9A9A9">Dark Grey</option>
+					<option value="#808080">Grey</option>
+					<option value="#D3D3D3">Light Grey</option>
+				</select>
+			</label>
+		</p>
+	    <p>
+			<label for="thickness">Background Color ( {{ bg_color }} )
+				<select (change)="changeBG($event)">
+					<option value="#000">Black</option>
+					<option value="#fff" selected>White</option>
+					<option value="#A9A9A9">Dark Grey</option>
+					<option value="#808080">Grey</option>
+					<option value="#D3D3D3">Light Grey</option>
+				</select>
+			</label>
+		</p>
+		<p>
 			<label for="thickness">Pencil Thickness ( {{thickness }} )
 				<select (change)="changePencil($event)">
 					<option value="1">1</option>
@@ -99,7 +121,7 @@
 				<img src="assets/accuracy-2.png" />
 			</div>
 			<div class="left-me">
-				<img src="assets/architecture.jpg" />
+				<img src="assets/archi.svg" />
 			</div>
 		</div>
 		<div *ngIf="!display_sketch">
