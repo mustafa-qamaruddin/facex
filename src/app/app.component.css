@@ -32,3 +32,10 @@ canvas {
 	width: 70%;
 	margin-right: 1.4em;
 }
+
+.interim {
+	min-width: 5em;
+	min-height: 5em;
+	margin-right: 1em;
+	border: 1px solid #eee; 
+}

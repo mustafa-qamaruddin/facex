@@ -110,7 +110,7 @@
 			<div *ngFor="let item of interim  | keyvalue"  class="container-me">
 				<h3>{{item.key}}</h3>
 				<div *ngFor="let im of item.value" class="left-me">
-					<img [src]="im" />
+					<img [src]="im" class="interim" />
 				</div>
 			</div>
 		</div>
