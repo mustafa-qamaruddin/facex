@@ -105,6 +105,16 @@
 		<br />
 		<button (click)="predict()">Predict</button>
 		<br />
+		<div *ngIf="interim">
+			<h2>Intermediate Results Visualization:</h2>
+			<div *ngFor="let item of interim  | keyvalue"  class="container-me">
+				<h3>{{item.key}}</h3>
+				<div *ngFor="let im of item.value" class="left-me">
+					<img [src]="im" />
+				</div>
+			</div>
+		</div>
+		<br />
 		<div *ngIf="display_sketch">
 			<div class="left-me">
 				<h3>Original Dataset BEFORE Convolution Filter</h3>

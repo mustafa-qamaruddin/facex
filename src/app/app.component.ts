@@ -7,6 +7,7 @@ import * as tf from '@tensorflow/tfjs';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { Label } from 'ng2-charts';
+import { getDataUrlFromArr } from 'array-to-image';
 
 
 tf.ENV.set('WEBGL_PACK', false)
@@ -40,6 +41,7 @@ export class AppComponent implements AfterViewInit {
   display_sketch = true;
   pen_color = "#000"
   bg_color = "#fff"
+  interim = null;
   
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -198,7 +200,8 @@ export class AppComponent implements AfterViewInit {
 	this.cx.fill();
   }
 
-  predict() { 
+  predict() {
+    this.interim = null;
 	const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
 	this.sample = canvasEl.toDataURL();
 	let image = tf.browser.fromPixels(canvasEl);
@@ -215,7 +218,8 @@ export class AppComponent implements AfterViewInit {
 	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
     this.barChartData[0].data = probs.dataSync();
-      
+    
+    this.interim = {};
     let o1 = batch;
     for ( let i in this.model.layers) {
         let name = this.model.layers[i].name;
@@ -233,11 +237,15 @@ export class AppComponent implements AfterViewInit {
         
         let w = shape[1];
         let h = shape[2];
+        let images_interim = Array();
         for ( let j = 0; j < shape[shape_len-1]; j++) {
             let start = j * (w * h);
             let end = start + (w*h);
             let im_data = buffer.slice(start, end + 1);
+            let im = getDataUrlFromArr(im_data, w, h);
+            images_interim.push(im);
         }
+        this.interim[l.name]  = images_interim;
         o1 = temp;
     }
   }
