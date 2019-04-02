@@ -8,6 +8,7 @@ import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { Label } from 'ng2-charts';
 import { getDataUrlFromArr } from 'array-to-image';
+import * as mobilenet from '@tensorflow-models/mobilenet';
 
 
 tf.ENV.set('WEBGL_PACK', false)
@@ -42,7 +43,11 @@ export class AppComponent implements AfterViewInit {
   pen_color = "#000"
   bg_color = "#fff"
   interim = null;
-  
+  display_training = false;
+  mobilenet_model:any = null;
+  trained_samples = 0;
+
+
   public barChartOptions: ChartOptions = {
     responsive: true,
     // We use these empty structures as placeholders for dynamic theming.
@@ -103,6 +108,8 @@ export class AppComponent implements AfterViewInit {
 
     this.captureEvents(canvasEl);
 	this.sample = canvasEl.toDataURL();
+    
+    this.mobilenet_model = await mobilenet.load();
   }
   
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -203,16 +210,21 @@ export class AppComponent implements AfterViewInit {
 
   predict() {
     this.interim = null;
+    const b = tf.scalar(255);
 	const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
-	this.sample = canvasEl.toDataURL();
-	let image = tf.browser.fromPixels(canvasEl);
-	
-	image = tf.image.resizeBilinear(image, [28, 28]);
-	image = image.mean(2);
-	image = image.toFloat();
-	const b = tf.scalar(255);
-	image = image.div(b);
-	const batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
+    let batch = null;
+    if ( this.display_training ) {
+        batch = this.mobilenet_model.infer(this.canvas.nativeElement, 'conv_preds');
+    } else {
+    	this.sample = canvasEl.toDataURL();
+    	let image = tf.browser.fromPixels(canvasEl);
+    	
+    	image = tf.image.resizeBilinear(image, [28, 28]);
+    	image = image.mean(2);
+    	image = image.toFloat();
+    	image = image.div(b);
+    	batch = tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
+    }
 	//console.log(batch.dataSync());
 	let probs = this.model.predict(batch).squeeze();
 	this.probability = Math.round(tf.max(probs).dataSync()[0] * 100);
@@ -220,6 +232,10 @@ export class AppComponent implements AfterViewInit {
 	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
     this.barChartData[0].data = probs.dataSync();
     
+    if ( this.display_training ) {
+        return;
+    }
+      
     this.interim = {};
     let o1 = batch;
     for ( let i in this.model.layers) {
@@ -258,10 +274,17 @@ export class AppComponent implements AfterViewInit {
             this.model_name = "CNN on Fashion MNIST";
             this.model = await tf.loadLayersModel("assets/model.json");
             this.display_sketch = false;
-      } else {
+            this.display_training = false;
+      } else if ( index == 1) {
             this.model_name = "CNN on Convoluted Sketch Fashion MNIST";
             this.model = await tf.loadLayersModel("assets/modelb/model.json");
             this.display_sketch = true;
+            this.display_training = false;
+      } else {
+            this.model_name = "Transfer Learning Mobile Net in the Browser";
+            this.createMLP();
+            this.display_sketch = false;
+            this.display_training = true;
       }
   }
   
@@ -276,5 +299,50 @@ export class AppComponent implements AfterViewInit {
       this.cx.fillStyle = e.target.options[index].value;
       this.bg_color = e.target.options[index].value;
       this.reset();
+  }
+  
+  createMLP() {
+    // A sequential model is a container which you can add layers to.
+    this.model = tf.sequential();
+    
+    // Add a dense layer with 10 output unit.
+    this.model.add(tf.layers.dense({units: 10, inputShape: [1024]}));
+    this.model.add(tf.layers.activation({activation: 'softmax'}));
+    
+    // Specify the loss type and optimizer for training.
+    this.model.compile({loss: 'meanSquaredError', optimizer: 'SGD'});
+    
+      
+    console.log(this.model);
+  }
+  
+  async trainModel(event) {
+    let sel:HTMLSelectElement = <HTMLSelectElement>document.getElementById('sample-label');
+    let val = sel.options[sel.selectedIndex].value;
+    let y = tf.oneHot(tf.tensor1d([val], 'int32'), 10);
+    console.log(val, y.dataSync());
+    // Get the intermediate activation of MobileNet 'conv_preds' and pass that
+    // to the KNN classifier.
+    let x = this.readImageFromCanvas();
+    const activation = this.mobilenet_model.infer(this.canvas.nativeElement, 'conv_preds');
+    console.log(activation.shape);
+
+    // Train the model.
+    await this.model.fit(activation, y, {epochs: 10});
+    
+    this.trained_samples ++;
+  }
+  
+  readImageFromCanvas(){
+        const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
+        this.sample = canvasEl.toDataURL();
+        let image = tf.browser.fromPixels(canvasEl);
+        
+        image = tf.image.resizeBilinear(image, [28, 28]);
+        image = image.mean(2);
+        image = image.toFloat();
+        const b = tf.scalar(255);
+        image = image.div(b);
+        return tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
   }
 }

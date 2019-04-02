@@ -7,6 +7,7 @@
 				<select (change)="changeModel($event)">
 					<option value="0">CNN on Fashion MNIST</option>
 					<option value="1" selected>CNN on Convoluted Sketch Fashion MNIST</option>
+					<option value="2">Transfer Learning in the Browser</option>
 				</select>
 			</label>
 		</p>
@@ -68,6 +69,27 @@
 			<button (click)="predict()" class="large-me">Predict</button>
 			<button (click)="reset()">Reset</button>
 		</div>
+		<div *ngIf="display_training" class="container-me top-me train-box">
+			<div class="left-me">
+			<label for="thickness">Training Label:
+				<select id="sample-label">
+					<option value="1" selected>T-shirt/top</option>
+					<option value="2">Trouser</option>
+					<option value="3">Pullover</option>
+					<option value="4">Dress</option>
+					<option value="5">Coat</option>
+					<option value="6">Sandal</option>
+					<option value="7">Shirt</option>
+					<option value="8">Sneaker</option>
+					<option value="9">Bag</option>
+					<option value="10">Ankle boot</option>
+				</select>
+			</label>
+			</div>
+			<div class="left-me padd-me">
+				<button (click)="trainModel($event)" class="large-me">Train Online Stochastic Gradient Descent</button>
+			</div>
+		</div>
 		</div>
 		<div class="left-me padd-me">
 			<div class="container-me">
@@ -103,7 +125,6 @@
 	</div>
 	<div class="container-me">
 		<br />
-		<button (click)="predict()">Predict</button>
 		<br />
 		<div *ngIf="interim">
 			<h2>Intermediate Results Visualization:</h2>
@@ -134,6 +155,7 @@
 				<img src="assets/archi.svg" />
 			</div>
 		</div>
+		<br />
 		<div *ngIf="!display_sketch">
 			<p>
 				<img src="assets/loss.png" />

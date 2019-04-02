@@ -39,3 +39,13 @@ canvas {
 	margin-right: 1em;
 	border: 1px solid #000; 
 }
+
+.train-box {
+	min-width: 100%;
+	margin-top: 1em;
+}
+
+.train-box select {
+	padding: 0.2em;
+	min-height: 1em;
+}
