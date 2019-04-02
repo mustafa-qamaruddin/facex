@@ -70,6 +70,7 @@
 			<button (click)="reset()">Reset</button>
 		</div>
 		<div *ngIf="display_training" class="container-me top-me train-box">
+		    <div class="left-me">Training Samples: # {{trained_samples}}</div>
 			<div class="left-me">
 			<label for="thickness">Training Label:
 				<select id="sample-label">
