@@ -70,11 +70,29 @@
 			<button (click)="reset()">Reset</button>
 		</div>
 		<div *ngIf="display_training" class="container-me top-me train-box">
-		    <div class="left-me">Training Samples: # {{trained_samples}}</div>
+		    <div class="container-me">Trained Samples: # {{trained_samples}}</div>
+		    
+		   	<div class="container-me">
+				<label for="new_label">New Label:
+					<input id="new-label" type="text" />
+				</label>
+				<button (click)="AddNewLabel()">Add</button>
+			</div>
+		    
+		    <div class="container-me"></div>
+
 			<div class="left-me">
+				<label for="epochs"># of Epochs:
+					<input type="number" value="1" min=1 />
+				</label>
+			</div>
+			
+			<div class="container-me"></div>
+			
+			<div class="container-me">
 			<label for="thickness">Training Label:
 				<select id="sample-label">
-					<option value="0" selected>T-shirt/top</option>
+					<option value="0">T-shirt/top</option>
 					<option value="1">Trouser</option>
 					<option value="2">Pullover</option>
 					<option value="3">Dress</option>
@@ -87,6 +105,9 @@
 				</select>
 			</label>
 			</div>
+			
+			<div class="container-me"></div>
+			
 			<div class="left-me padd-me">
 				<button (click)="trainModel($event)" class="large-me">Train Online Stochastic Gradient Descent</button>
 			</div>
@@ -127,7 +148,7 @@
 	<div class="container-me">
 		<br />
 		<br />
-		<div *ngIf="interim">
+		<div *ngIf="interim" class="left-me">
 			<h2>Intermediate Results Visualization:</h2>
 			<div *ngFor="let item of interim  | keyvalue"  class="container-me">
 				<h3>{{item.key}}</h3>
@@ -136,7 +157,8 @@
 				</div>
 			</div>
 		</div>
-		<br />
+	</div>
+	<div class="container-me">
 		<div *ngIf="display_sketch">
 			<div class="left-me">
 				<h3>Original Dataset BEFORE Convolution Filter</h3>

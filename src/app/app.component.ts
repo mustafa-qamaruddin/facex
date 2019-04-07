@@ -229,9 +229,20 @@ export class AppComponent implements AfterViewInit {
 	let probs = this.model.predict(batch).squeeze();
 	this.probability = Math.round(tf.max(probs).dataSync()[0] * 100);
 	//console.log(probs.shape, tf.argMax(probs).dataSync()[0]);
-	this.prediction = this.labels[tf.argMax(probs).dataSync()[0]];
+    let max_index = tf.argMax(probs).dataSync()[0];
+	this.prediction = this.labels[max_index];
     this.barChartData[0].data = probs.dataSync();
     
+    let colors: Array<string> = Array();
+    for ( let cx = 0; cx < this.labels.length; cx++) {
+        if ( cx == max_index ) {
+            colors.push("#00ff00");
+        } else {
+            colors.push("#0000ff");
+        }
+    }
+      
+    this.barChartData[0].backgroundColor = colors;
     if ( this.display_training ) {
         return;
     }
@@ -282,7 +293,7 @@ export class AppComponent implements AfterViewInit {
             this.display_training = false;
       } else {
             this.model_name = "Transfer Learning Mobile Net in the Browser";
-            this.createMLP();
+            this.createMLP(10);
             this.display_sketch = false;
             this.display_training = true;
       }
@@ -301,12 +312,12 @@ export class AppComponent implements AfterViewInit {
       this.reset();
   }
   
-  createMLP() {
+  createMLP(in_length) {
     // A sequential model is a container which you can add layers to.
     this.model = tf.sequential();
     
     // Add a dense layer with 10 output unit.
-    this.model.add(tf.layers.dense({units: 10, inputShape: [1024]}));
+    this.model.add(tf.layers.dense({units: in_length, inputShape: [1024]}));
     this.model.add(tf.layers.activation({activation: 'softmax'}));
     
     // Specify the loss type and optimizer for training.
@@ -319,7 +330,7 @@ export class AppComponent implements AfterViewInit {
   async trainModel(event) {
     let sel:HTMLSelectElement = <HTMLSelectElement>document.getElementById('sample-label');
     let val = sel.options[sel.selectedIndex].value;
-    let y = tf.oneHot(tf.tensor1d([val], 'int32'), 10);
+    let y = tf.oneHot(tf.tensor1d([val], 'int32'), sel.options.length);
     console.log(val, y.dataSync());
     // Get the intermediate activation of MobileNet 'conv_preds' and pass that
     // to the KNN classifier.
@@ -328,7 +339,7 @@ export class AppComponent implements AfterViewInit {
     console.log(activation.shape);
 
     // Train the model.
-    await this.model.fit(activation, y, {epochs: 10});
+    await this.model.fit(activation, y, {epochs: 1});
     
     this.trained_samples ++;
   }
@@ -344,5 +355,24 @@ export class AppComponent implements AfterViewInit {
         const b = tf.scalar(255);
         image = image.div(b);
         return tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
+  }
+    
+    
+  AddNewLabel() {
+      let input:HTMLInputElement = <HTMLInputElement> document.getElementById('new-label');
+      console.log(input.value);
+      
+      // append to select
+      let sel:HTMLSelectElement = <HTMLSelectElement>document.getElementById('sample-label');
+      let opt = document.createElement('option');
+      opt.appendChild( document.createTextNode(input.value) );
+      opt.value = sel.options.length;   
+      sel.appendChild(opt);
+      
+      // append to labels of predictions
+      this.labels.push(input.value);
+      
+      // change model
+      this.createMLP(sel.options.length);
   }
 }
