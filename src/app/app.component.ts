@@ -354,7 +354,7 @@ export class AppComponent implements AfterViewInit {
         image = image.toFloat();
         const b = tf.scalar(255);
         image = image.div(b);
-        return tf.tensor4d(Array.from(image.dataSync()),[1,28,28, 1]);
+        return tf.tensor4d(Array.from(image.dataSync()),[1,28,28,1]);
   }
     
     
@@ -366,7 +366,7 @@ export class AppComponent implements AfterViewInit {
       let sel:HTMLSelectElement = <HTMLSelectElement>document.getElementById('sample-label');
       let opt = document.createElement('option');
       opt.appendChild( document.createTextNode(input.value) );
-      opt.value = sel.options.length;   
+      opt.value = ""+sel.options.length+"";   
       sel.appendChild(opt);
       
       // append to labels of predictions
