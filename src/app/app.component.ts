@@ -258,6 +258,8 @@ export class AppComponent implements AfterViewInit {
         
         let l = this.model.layers[i];
         let temp = l.apply(o1);
+        temp = tf.sub(temp, tf.min(temp));
+        temp = tf.div(temp, tf.max(temp));
         temp = temp.mul(b);
         let shape = temp.shape;
         let buffer = temp.dataSync();
