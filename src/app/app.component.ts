@@ -23,7 +23,7 @@ export class AppComponent implements AfterViewInit {
   title = 'facex';
   prediction:any = NaN;
   probability:number = NaN;
-  thickness = 5;
+  thickness = 10;
   labels = [
 	'T-shirt/top',
 	'Trouser',
