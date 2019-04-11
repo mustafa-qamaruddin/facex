@@ -85,7 +85,7 @@ export class AppComponent implements AfterViewInit {
   
   
   public async ngAfterViewInit() {
-	this.model = await tf.loadLayersModel("assets/modelb/model.json");
+	this.model = await tf.loadLayersModel("assets/modelc/model.json");
 
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d');
